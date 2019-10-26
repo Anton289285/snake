@@ -1,86 +1,71 @@
-"""
-Использование графического модуля graph.py
-змейка с управлением клавишами стрелками
-
-"""
-# x New, Ynew - Это
-# moveSnake - Это
-# snake - Это
-# newCoord -Это
-# moveObjectTo - Это
-# keyPressed
-# eventKeycode - Это
-# doMove - Это
-#
-
 from graph import *
 
+windowSize(600, 600)
+canvasSize(600, 600)
+
+# рисование
+penColor("black")
+brushColor("blue")
+rectangle(1, 1, 599, 599)
+
+# рисование полос
+penColor(100, 100, 255)
+for i in range(0, 600, 20):
+    line(i, 0, i, 600)
+for i in range(00, 600, 20):
+    line(0, i, 600, i)
+
+penColor("red")
+brushColor("yellow")
+# создание змейки
+snake = []
+snake_leng = 10
+def snake_create():
+    for i in range(0, snake_leng, 1):
+        snake.append(rectangle((400 + i*20), 100, (400 + i*20 +20), 120))
+    changeFillColor(snake[0], "red")
 
 
-
-def moveSnake(xNew, yNew):
-  global x, y
-  for k in range(len(snake)-1,0,-1):
-    newCoord = coords(snake[k-1])
-    moveObjectTo(snake[k], newCoord[0], newCoord[1])
-  moveObjectTo(snake[0], xNew, yNew)
-  x = xNew
-  y = yNew
+def move_snake():
+    for i in range((snake_leng - 1), 0, -1):
+        newCoord = coords(snake[i-1])
+        moveObjectTo(snake[i], (newCoord[0] + 1), (newCoord[1] + 1))
+# !!!!!!!!!!!!
+    newCoord = coords(snake[0])
+    moveObjectTo(snake[0], (newCoord[0] + 1 + 20*dx), (newCoord[1] + 1 + 20*dy))
 
 def keyPressed(event):
-  global dx, dy
-  if event.keycode == VK_LEFT:
-    dx = -1; dy = 0
-  elif event.keycode == VK_RIGHT:
-    dx = 1; dy = 0
-  elif event.keycode == VK_UP:
-    dx = 0; dy = -1
-  elif event.keycode == VK_DOWN:
-    dx = 0; dy = 1
-  elif event.keycode == VK_SPACE:
-    dx = dy = 0
-  elif event.keycode == VK_ESCAPE:
-    close()
+    global dx, dy
+    if event.keycode == VK_ESCAPE:
+        close()
+    if event.keycode == VK_LEFT:
 
-def doMove():
-  global dx, dy
-  if dx or dy:
-    xNew = x + dx*a
-    yNew = y + dy*a
-    if xNew < 0:
-      dx = 0
-      if yNew > 0: dy = -1
-      else: dy = 1
-    elif yNew < 0:
-      dy = 0
-      if xNew > 0: dx = -1
-      else: dx = 1
-    elif xNew > 400-a:
-      dx = 0
-      if yNew < 400-a: dy = 1
-      else: dy = -1
-    elif yNew > 400-a:
-      dy = 0
-      if xNew < 400-a: dx = 1
-      else: dx = -1
-    else: moveSnake(xNew, yNew)
-# =================================            ===========================
+        dx = -1
+        dy = 0
+    elif event.keycode == VK_RIGHT:
+        dx = 1
+        dy = 0
+    elif event.keycode == VK_UP:
+        dx = 0
+        dy = -1
+    elif event.keycode == VK_DOWN:
+        dx = 0
+        dy = 1
+# ======================
 
-brushColor("blue")
-rectangle(0, 0, 400, 400)
 
-x = 100; y = 100
-dx = 0;  dy = 0
-a = 10; N = 20
 
-snake = []
-penColor("yellow")
-brushColor("yellow")
-for i in range(0,N):
-  snake.append( rectangle(x+i*a, y, x+i*a+a, y+a) )
-  brushColor("green")
+
+
+
+dx = -1
+dy = 0
+
+snake_create()
+
 
 onKey(keyPressed)
-onTimer(doMove, 50)
+
+onTimer(move_snake, 1000)
 
 run()
