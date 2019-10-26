@@ -38,6 +38,13 @@ def move_snake():
     for j in range((snake_leng - 1), 0, -1):
         if coords(snake[0]) == coords(snake[j]):
             close()
+
+    coord_0 = coords(snake[0])
+    if (coord_0[0] < -1) or (coord_0[1] < -1) or (coord_0[0] > 581) or (coord_0[1] > 581):
+        close()
+
+
+
 def keyPressed(event):
     global dx, dy
     if event.keycode == VK_ESCAPE:
