@@ -20,9 +20,11 @@ brushColor("yellow")
 # создание змейки
 snake = []
 snake_leng = 10
+snake_x_nachalo = 300
+snake_y_nachalo = 300
 def snake_create():
     for i in range(0, snake_leng, 1):
-        snake.append(rectangle((400 + i*20), 100, (400 + i*20 +20), 120))
+        snake.append(rectangle((snake_x_nachalo + i*20), snake_y_nachalo, (snake_x_nachalo + i*20 +20), (snake_y_nachalo + 20)))
     changeFillColor(snake[0], "red")
 
 
@@ -33,7 +35,9 @@ def move_snake():
 # !!!!!!!!!!!!
     newCoord = coords(snake[0])
     moveObjectTo(snake[0], (newCoord[0] + 1 + 20*dx), (newCoord[1] + 1 + 20*dy))
-
+    for j in range((snake_leng - 1), 0, -1):
+        if coords(snake[0]) == coords(snake[j]):
+            close()
 def keyPressed(event):
     global dx, dy
     if event.keycode == VK_ESCAPE:
