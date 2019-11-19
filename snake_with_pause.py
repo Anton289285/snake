@@ -4,9 +4,8 @@ from random import *
 
 
 def innicializations():
-    global score, score_label
-    windowSize(800, 600)
-    canvasSize(800, 600)
+    windowSize(600, 600)
+    canvasSize(600, 600)
 
     # рисование
     penColor("black")
@@ -20,10 +19,6 @@ def innicializations():
     for i in range(00, 600, 20):
         line(0, i, 600, i)
 
-    score = 0
-    score_label = label(" Score  =  "+str(score), 600, 10)
-    score_label["font"] = "Purisa 18"
-    score_label["bg"] = "white"
     penColor("red")
     brushColor("yellow")
 
@@ -37,10 +32,8 @@ Pause = True
 snake_x_nachalo = 300
 snake_y_nachalo = 300
 def snake_create():
-    global snake, score, score_label
+    global snake
     snake = []
-    score = 0
-    score_label["text"] = " Score  =  "+str(score)
 
     brushColor("yellow")
     for i in range(0, snake_leng, 1):
@@ -80,7 +73,7 @@ def remove_prize():
 
 #==============================================================
 def move_snake():
-    global snake_leng, snake, score, score_label
+    global snake_leng, snake
     coord_last = coords(snake[snake_leng - 1])
 
     for i in range((snake_leng - 1), 0, -1):
@@ -98,9 +91,6 @@ def move_snake():
     if (((coord_0[0] + 1) == coord_prize[0]) and ((coord_0[1]+1) == coord_prize[1])):
         #changeFillColor(snake[0], "green")
         moveObjectTo(prize, coord_last[0], coord_last[1])
-        score = score + 1
-        score_label["text"] = " Score  =  "+str(score)
-
         snake.append(prize)
         snake_leng = snake_leng + 1
         prize_create()
