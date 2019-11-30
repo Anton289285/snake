@@ -4,8 +4,9 @@ from random import *
 
 
 def innicializations():
-    windowSize(600, 600)
-    canvasSize(600, 600)
+    global score, score_label
+    windowSize(800, 600)
+    canvasSize(800, 600)
 
     # рисование
     penColor("black")
@@ -19,21 +20,26 @@ def innicializations():
     for i in range(00, 600, 20):
         line(0, i, 600, i)
 
+    score = 0
+    score_label = label("   Score  =  "+str(score), 600, 10)
+    score_label["font"] = "MathJax_SansSerif 18"
+    score_label["bg"] = "white"
     penColor("red")
     brushColor("yellow")
 
 # =========================================================
+
 Pause = True
 # создание змейки
 
-
-# snake = []
-
 snake_x_nachalo = 300
 snake_y_nachalo = 300
+
 def snake_create():
-    global snake
+    global snake, score, score_label
     snake = []
+    score = 0
+    score_label["text"] = "   Score  =  "+str(score)
 
     brushColor("yellow")
     for i in range(0, snake_leng, 1):
@@ -41,39 +47,59 @@ def snake_create():
                                (snake_x_nachalo + i*20 + 20),
                                (snake_y_nachalo + 20)))
     changeFillColor(snake[0], "red")
+
 #===============================================================
 coord_prize = []
-coord_prize.append(randrange(0, 580, 20))
-coord_prize.append(randrange(0, 580, 20))
+coord_prize.append(randrange(0, 600, 20))
+coord_prize.append(randrange(0, 600, 20))
 
 def timer_loop():
     pass
-
+#==================!!!!!!!!!!!!!!!!!!!!!========================
 
 def prize_create():
     global prize
     global coord_prize
     global snake, snake_leng
-    coord_prize[0] = randrange(0, 580, 20)
-    coord_prize[1] = randrange(0, 580, 20)
+    global list_avaible, list_snake
+
+    list_avaible = []
+    for i in range(900):
+        list_avaible.append(i)
+
+    list_snake = []
+    for i in range(snake_leng):
+        coord_i = coords(snake[i])
+        list_snake.append(int((coord_i[0]+1) / 20) + (int((coord_i[1]+1) / 20) * 30))
+
+    for i in range(snake_leng):
+        list_avaible.remove(list_snake[i])
+
+    i = randint(0, (899 - snake_leng))
+
+    coord_prize = [0, 0]
+    coord_prize[0] = (list_avaible[i] - ((list_avaible[i] // 30) * 30)) * 20
+    coord_prize[1] = (list_avaible[i] // 30) * 20
 
     brushColor(randint(0, 255), randint(0, 255), randint(0, 255))
     prize = rectangle(coord_prize[0], coord_prize[1],
                       coord_prize[0] + 20, coord_prize[1] + 20)
-
-
+    list_avaible.clear
+    list_snake.clear
+#==============================================================
 def remove_snake():
+
     for i in range(0, snake_leng, 1):
         deleteObject(snake[i])
 
-
+#=============================================================
 def remove_prize():
     deleteObject(prize)
 
 
 #==============================================================
 def move_snake():
-    global snake_leng, snake
+    global snake_leng, snake, score, score_label, game_timer, Pause, dx, dy
     coord_last = coords(snake[snake_leng - 1])
 
     for i in range((snake_leng - 1), 0, -1):
@@ -83,14 +109,34 @@ def move_snake():
     moveObjectTo(snake[0], (newCoord[0] + 1 + 20*dx), (newCoord[1] + 1 + 20*dy))
     for j in range((snake_leng - 1), 0, -1):
         if coords(snake[0]) == coords(snake[j]):
+            # Возникает ошибка че то там оут оф(Решено добавил брейк)
             game_timer.func = timer_loop
-
+            Pause = True
+            dx = -1
+            dy = 0
+            remove_snake()
+            remove_prize()
+            snake_leng = 3
+            snake_create()
+            prize_create()
+            break
     coord_0 = coords(snake[0])
     if (coord_0[0] < -1) or (coord_0[1] < -1) or (coord_0[0] > 581) or (coord_0[1] > 581):
         game_timer.func = timer_loop
+        Pause = True
+        dx = -1
+        dy = 0
+        remove_snake()
+        remove_prize()
+        snake_leng = 3
+        snake_create()
+        prize_create()
+
     if (((coord_0[0] + 1) == coord_prize[0]) and ((coord_0[1]+1) == coord_prize[1])):
-        #changeFillColor(snake[0], "green")
         moveObjectTo(prize, coord_last[0], coord_last[1])
+        score = score + 1
+        score_label["text"] = "   Score  =  "+str(score)
+        moveObjectBy(prize, 1, 1)
         snake.append(prize)
         snake_leng = snake_leng + 1
         prize_create()
@@ -99,10 +145,11 @@ def move_snake():
 
 
 def keyPressed(event):
-    global dx, dy, snake_leng, game_timer, Pause
+    global dx, dy, snake_leng, game_timer, Pause, speed
     if event.keycode == VK_ESCAPE:
         close()
     if event.keycode == VK_RETURN:
+        Pause = True
         game_timer.func = timer_loop
         dx = -1
         dy = 0
@@ -111,7 +158,6 @@ def keyPressed(event):
         snake_leng = 3
         snake_create()
         prize_create()
-        game_timer.func = move_snake
 
     if event.keycode == VK_SPACE:
         if Pause == True:
@@ -134,22 +180,12 @@ def keyPressed(event):
         dx = 0
         dy = 1
 
-
-# ======================
-
-
-
-
-
+# ======================(main)=====================================
 
 dx = -1
 dy = 0
 snake_leng = 3
-#!!!!!!!!!!!
-# def main():
-
 onKey(keyPressed)
-#onTimer(movie_snake, 100)
 game_timer = onTimer(timer_loop, 100)
 innicializations()
 snake_create()
@@ -157,6 +193,4 @@ prize_create()
 
 
 run()
-#!!!!!!!!!
-# main()
 
